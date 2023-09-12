@@ -3,6 +3,7 @@ package com.masprogtechs.park.api.web.controller;
 import com.masprogtechs.park.api.entity.User;
 import com.masprogtechs.park.api.service.UserService;
 import com.masprogtechs.park.api.web.dto.UserCreateDto;
+import com.masprogtechs.park.api.web.dto.UserPasswordDto;
 import com.masprogtechs.park.api.web.dto.UserResponseDto;
 import com.masprogtechs.park.api.web.dto.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -49,9 +50,27 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    @PatchMapping("/{id}")
+   /* @PatchMapping("/{id}")
     public ResponseEntity<User> updatePassword(@PathVariable Long id, @RequestBody User user){
         User userUpdate = userService.updatePassword(id, user.getPassword());
         return ResponseEntity.ok(userUpdate);
     }
+
+        @PatchMapping("/{id}")
+        public ResponseEntity<UserResponseDto> updatePassword(@PathVariable Long id,
+                                                              @RequestBody UserPasswordDto dto){
+        User user = userService.updatePassword(id, dto.getCurrentPassword(),
+                dto.getNewPassword(), dto.getConfirmPassword());
+        return ResponseEntity.ok(UserMapper.toDto(user));
+    }*/
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id,
+                                                          @RequestBody UserPasswordDto dto){
+        User user = userService.updatePassword(id, dto.getCurrentPassword(),
+                dto.getNewPassword(), dto.getConfirmPassword());
+        return ResponseEntity.noContent().build();
+    }
+
+
 }
