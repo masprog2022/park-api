@@ -1,6 +1,8 @@
 package com.masprogtechs.park.api.service;
 
 import com.masprogtechs.park.api.entity.User;
+import com.masprogtechs.park.api.exception.EntityRuntimeException;
+import com.masprogtechs.park.api.exception.PasswordInvalidException;
 import com.masprogtechs.park.api.exception.UsernameUniqueViolationException;
 import com.masprogtechs.park.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,20 +31,20 @@ public class UserService {
     @Transactional(readOnly = true)
     public User findById(Long id) {
         return userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Usuário não encontrado")
-        );
+                () -> new EntityRuntimeException(String.format("Usuário %s não encontrado.", id)
+        ));
     }
 
     @Transactional
     public User updatePassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
 
         if(!newPassword.equals(confirmPassword)){
-            throw new RuntimeException("Nova senha não confere com a confirmação de senha.");
+            throw new PasswordInvalidException("Nova senha não confere com a confirmação de senha.");
         }
 
         User user = findById(id);
         if(!user.getPassword().equals(currentPassword)){
-            throw new RuntimeException("Sua senha não confere.");
+            throw new PasswordInvalidException("Sua senha não confere.");
         }
 
         user.setPassword(newPassword);
