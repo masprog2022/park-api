@@ -31,10 +31,16 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(user));
     }
 
-    @GetMapping("/{id}")
+   /* @GetMapping("/{id}")
     public ResponseEntity<User> getById(@PathVariable Long id){
         User user = userService.findById(id);
         return ResponseEntity.ok(user);
+    }*/
+
+        @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDto> getById(@PathVariable Long id){
+        User user = userService.findById(id);
+        return ResponseEntity.ok(UserMapper.toDto(user));
     }
 
     @GetMapping
