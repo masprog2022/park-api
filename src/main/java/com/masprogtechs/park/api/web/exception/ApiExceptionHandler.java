@@ -1,5 +1,6 @@
 package com.masprogtechs.park.api.web.exception;
 
+import com.masprogtechs.park.api.exception.UsernameUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,14 +15,25 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    @ExceptionHandler(UsernameUniqueViolationException.class)
+    public ResponseEntity<ErrorMessage> methodArgumentNotValidException(RuntimeException ex,
+                                                                        HttpServletRequest request){
+
+        log.error("Api error - ", ex);
+        return ResponseEntity
+              .status(HttpStatus.CONFLICT)
+              .contentType(MediaType.APPLICATION_JSON)
+              .body(new ErrorMessage(request, HttpStatus.CONFLICT, ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessage> methodArgumentNotValidException(MethodArgumentNotValidException ex,
                                                                         HttpServletRequest request, BindingResult result){
 
         log.error("Api error - ", ex);
         return ResponseEntity
-              .status(HttpStatus.UNPROCESSABLE_ENTITY)
-              .contentType(MediaType.APPLICATION_JSON)
-              .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Camp(s) invalido(s)", result));
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Camp(s) invalido(s)", result));
     }
 }
