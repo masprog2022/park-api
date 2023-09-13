@@ -6,7 +6,9 @@ import com.masprogtechs.park.api.web.dto.UserCreateDto;
 import com.masprogtechs.park.api.web.dto.UserPasswordDto;
 import com.masprogtechs.park.api.web.dto.UserResponseDto;
 import com.masprogtechs.park.api.web.dto.mapper.UserMapper;
+import com.masprogtechs.park.api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,17 +37,14 @@ public class UserController {
 
 
     @PostMapping
-    @Operation(summary = "Salvar um usuário", description = "Salvar um usuário",
-            tags = {"Usuário"},
+    @Operation(summary = "Criar um novo usuário", description = "Recurso para criar um novo usuário",
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = UserCreateDto.class))
-                    ),
-                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+                    @ApiResponse(responseCode = "201", description = "Recurso criado com sucesso",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "409", description = "Usuário e-mail já cadastrado no sistema",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "422", description = "Recurso não processado por dados de entrada invalidos",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             })
     public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserCreateDto createDto){
         User user = userService.save(UserMapper.toUser(createDto));
@@ -59,17 +58,12 @@ public class UserController {
     }*/
 
     @GetMapping("/{id}")
-    @Operation(summary = "Mostrar usuários por id", description = "Mostrar usuários por id",
-            tags = {"Usuário"},
+    @Operation(summary = "Recuperar um usuário pelo id", description = "Recuperar um usuário pelo id",
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = UserResponseDto.class))
-                    ),
-                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+                    @ApiResponse(responseCode = "200", description = "Recurso recuperado com sucesso",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             })
     public ResponseEntity<UserResponseDto> getById(@PathVariable Long id){
         User user = userService.findById(id);
@@ -77,17 +71,11 @@ public class UserController {
     }
 
     @GetMapping
-    @Operation(summary = "Mostrar todos os usuários", description = "Mostrar todos os usuários",
-            tags = {"Usuário"},
+    @Operation(summary = "Listar todos os usuários", description = "Listar todos os usuários cadastrados",
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = UserResponseDto.class))
-                    ),
-                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+                    @ApiResponse(responseCode = "200", description = "Lista com todos os usuários cadastrados",
+                            content = @Content(mediaType = "application/json",
+                                    array = @ArraySchema(schema = @Schema(implementation = UserResponseDto.class))))
             })
     public ResponseEntity<List<UserResponseDto>> getAll(){
         List<User> users = userService.findAll();
@@ -109,17 +97,14 @@ public class UserController {
     }*/
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar senha do usuário", description = "Actualizar senha do usuário",
-            tags = {"Usuário"},
+    @Operation(summary = "Atualizar senha", description = "Atualizar senha",
             responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = User.class))
-                    ),
-                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+                    @ApiResponse(responseCode = "204", description = "Senha atualizada com sucesso",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
+                    @ApiResponse(responseCode = "400", description = "Senha não confere",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             })
     public ResponseEntity<Void> updatePassword(@PathVariable Long id,
                                                           @Valid @RequestBody UserPasswordDto dto){
