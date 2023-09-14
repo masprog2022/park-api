@@ -104,6 +104,8 @@ public class UserController {
                     @ApiResponse(responseCode = "400", description = "Senha não confere",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "404", description = "Recurso não encontrado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "422", description = "Campos invalidos ou mal formatados",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             })
     public ResponseEntity<Void> updatePassword(@PathVariable Long id,
