@@ -1,6 +1,7 @@
 package com.masprogtechs.park.api.service;
 
 import com.masprogtechs.park.api.entity.User;
+import com.masprogtechs.park.api.enums.Role;
 import com.masprogtechs.park.api.exception.EntityRuntimeException;
 import com.masprogtechs.park.api.exception.PasswordInvalidException;
 import com.masprogtechs.park.api.exception.UsernameUniqueViolationException;
@@ -54,5 +55,16 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new EntityRuntimeException(String.format("Usuário com %s não encontrado.", username)
+                ));
+    }
+    @Transactional(readOnly = true)
+    public Role findRoleByUsername(String username) {
+        return userRepository.findRoleByUsername(username);
     }
 }
