@@ -1,5 +1,6 @@
 package com.masprogtechs.park.api.config;
 
+import com.masprogtechs.park.api.jwt.JwtAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @EnableMethodSecurity
@@ -28,10 +30,19 @@ public class SpringSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "api/v1/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/v1/auth").permitAll()
                         .anyRequest().authenticated()
                 ).sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).build();
+                ).addFilterBefore(
+                        jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class
+                )
+                .build();
+    }
+
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter(){
+        return new JwtAuthorizationFilter();
     }
 
     @Bean
