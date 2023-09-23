@@ -59,7 +59,7 @@ public class UserController {
     }*/
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') OR (hasRole('CUSTOMER') AND #id == authentication.principal.id)")
     @Operation(summary = "Recuperar um usuário pelo id", description = "Recuperar um usuário pelo id",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso recuperado com sucesso",
