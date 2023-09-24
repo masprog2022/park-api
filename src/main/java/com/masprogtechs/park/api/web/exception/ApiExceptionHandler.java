@@ -13,19 +13,30 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
+
 @Slf4j
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorMessage> accessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
+        log.error("Api Error - ", ex);
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, ex.getMessage()));
+    }
+
     @ExceptionHandler(EntityRuntimeException.class)
     public ResponseEntity<ErrorMessage> entityRuntimeException(RuntimeException ex,
-                                                                        HttpServletRequest request){
+                                                               HttpServletRequest request){
 
         log.error("Api error - ", ex);
         return ResponseEntity
-              .status(HttpStatus.NOT_FOUND)
-              .contentType(MediaType.APPLICATION_JSON)
-              .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
+                .status(HttpStatus.NOT_FOUND)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
     }
 
     @ExceptionHandler(PasswordInvalidException.class)
