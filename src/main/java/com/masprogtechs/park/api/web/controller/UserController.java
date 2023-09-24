@@ -73,6 +73,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Listar todos os usuários", description = "Listar todos os usuários cadastrados",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Lista com todos os usuários cadastrados",
