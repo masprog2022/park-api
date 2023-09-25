@@ -1,5 +1,6 @@
 package com.masprogtechs.park.api.web.exception;
 
+import com.masprogtechs.park.api.exception.CpfUniqueViolationException;
 import com.masprogtechs.park.api.exception.EntityRuntimeException;
 import com.masprogtechs.park.api.exception.PasswordInvalidException;
 import com.masprogtechs.park.api.exception.UsernameUniqueViolationException;
@@ -50,7 +51,7 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 
-    @ExceptionHandler(UsernameUniqueViolationException.class)
+    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex,
                                                                         HttpServletRequest request){
 
