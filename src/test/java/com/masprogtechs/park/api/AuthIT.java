@@ -2,6 +2,7 @@ package com.masprogtechs.park.api;
 
 import com.masprogtechs.park.api.jwt.JwtToken;
 import com.masprogtechs.park.api.web.dto.UserLoginDto;
+import com.masprogtechs.park.api.web.exception.ErrorMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +30,34 @@ public class AuthIT {
                 .expectBody(JwtToken.class)
                 .returnResult().getResponseBody();
         org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+
+    }
+
+    @Test
+    public void authenticate_WithCredentialsInvalid_ReturnErrorMessageWithStatus400(){
+        ErrorMessage responseBody = testClient
+                .post()
+                .uri("/api/v1/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserLoginDto("invalid@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
+
+        responseBody = testClient
+                .post()
+                .uri("/api/v1/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserLoginDto("ana@gmail.com", "000000"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
 
     }
 
