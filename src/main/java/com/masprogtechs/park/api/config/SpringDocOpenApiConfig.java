@@ -18,7 +18,7 @@ public class SpringDocOpenApiConfig {
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes("security", securityScheme()))
                 .info(new Info()
-                        .title("REST API - Spring Park")
+                        .title("REST API - Parking Lot")
                         .version("v1")
                         .description("Api para gestão de gerenciamento de veículos")
                         .termsOfService("https://about-mauro.netlify.app/")
