@@ -3,12 +3,15 @@ package com.masprogtechs.park.api.web.controller;
 import com.masprogtechs.park.api.entity.Customer;
 import com.masprogtechs.park.api.jwt.JwtUserDetails;
 import com.masprogtechs.park.api.repository.CustomerRepository;
+import com.masprogtechs.park.api.repository.projection.CustomerProjection;
 import com.masprogtechs.park.api.service.CustomerService;
 import com.masprogtechs.park.api.service.UserService;
 import com.masprogtechs.park.api.web.dto.CustomerCreateDto;
 import com.masprogtechs.park.api.web.dto.CustomerResponseDto;
+import com.masprogtechs.park.api.web.dto.PageableDto;
 import com.masprogtechs.park.api.web.dto.UserResponseDto;
 import com.masprogtechs.park.api.web.dto.mapper.CustomerMapper;
+import com.masprogtechs.park.api.web.dto.mapper.PageableMapper;
 import com.masprogtechs.park.api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -83,8 +86,8 @@ public class CustomerController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<Customer>> getAll(Pageable pageable){
-        Page<Customer> customers = customerService.findAll(pageable);
-        return ResponseEntity.ok(customers);
+    public ResponseEntity<PageableDto> getAll(Pageable pageable){
+        Page<CustomerProjection> customers = customerService.findAll(pageable);
+        return ResponseEntity.ok(PageableMapper.toDto(customers));
     }
 }
