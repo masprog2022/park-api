@@ -20,6 +20,8 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
+
+
     @Transactional
     public Customer save(Customer customer){
         try{
@@ -40,5 +42,10 @@ public class CustomerService {
       @Transactional(readOnly = true)
     public Page<CustomerProjection> findAll(Pageable pageable) {
         return customerRepository.findAllPageable(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public  Customer findByUserId(Long id) {
+        return customerRepository.findByUserId(id);
     }
 }
