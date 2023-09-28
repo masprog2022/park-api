@@ -131,5 +131,35 @@ public class CustomerIT {
         org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(10);
     }
 
+    @Test
+    public void findCustomer_WithIdNonExistentByAdmin_ReturnErrorMessageWithStatus403(){ // Não passou
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri("/api/v1/customers/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    public void findCustomer_WithIdExistentByCustomer_ReturnErrorMessageWithStatus403(){ // Não passou
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri("/api/v1/customers/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
+
 
 }
