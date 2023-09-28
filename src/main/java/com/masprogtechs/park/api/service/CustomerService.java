@@ -3,6 +3,7 @@ package com.masprogtechs.park.api.service;
 import com.masprogtechs.park.api.entity.Customer;
 import com.masprogtechs.park.api.exception.CpfUniqueViolationException;
 import com.masprogtechs.park.api.repository.CustomerRepository;
+import com.masprogtechs.park.api.repository.projection.CustomerProjection;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -37,7 +38,7 @@ public class CustomerService {
         );
     }
       @Transactional(readOnly = true)
-    public Page<Customer> findAll(Pageable pageable) {
-        return customerRepository.findAll(pageable);
+    public Page<CustomerProjection> findAll(Pageable pageable) {
+        return customerRepository.findAllPageable(pageable);
     }
 }
