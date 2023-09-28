@@ -116,5 +116,20 @@ public class CustomerIT {
         org.assertj.core.api.Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
     }
 
+    @Test
+    public void findCustomer_WithIdExistingByAdmin_ReturnCustomerWithStatus200(){
+        CustomerResponseDto responseBody = testClient
+                .get()
+                .uri("/api/v1/customers/10")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(CustomerResponseDto.class)
+                .returnResult().getResponseBody();
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getId()).isEqualTo(10);
+    }
+
 
 }
