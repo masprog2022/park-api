@@ -3,6 +3,7 @@ package com.masprogtechs.park.api.service;
 import com.masprogtechs.park.api.entity.Customer;
 import com.masprogtechs.park.api.exception.CpfUniqueViolationException;
 import com.masprogtechs.park.api.repository.CustomerRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -25,4 +26,10 @@ public class CustomerService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public Customer findById(Long id) {
+        return customerRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Cliente %s não encontrado no sistema", id))
+        );
+    }
 }
