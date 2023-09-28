@@ -120,4 +120,11 @@ public class CustomerController {
         Page<CustomerProjection> customers = customerService.findAll(pageable);
         return ResponseEntity.ok(PageableMapper.toDto(customers));
     }
+
+    @GetMapping("/details")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<CustomerResponseDto> getDetails(@AuthenticationPrincipal JwtUserDetails userDetails){
+        Customer customer = customerService.findByUserId(userDetails.getId());
+        return ResponseEntity.ok(CustomerMapper.toDto(customer));
+    }
 }
