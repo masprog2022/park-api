@@ -1,9 +1,6 @@
 package com.masprogtechs.park.api.web.exception;
 
-import com.masprogtechs.park.api.exception.CpfUniqueViolationException;
-import com.masprogtechs.park.api.exception.EntityRuntimeException;
-import com.masprogtechs.park.api.exception.PasswordInvalidException;
-import com.masprogtechs.park.api.exception.UsernameUniqueViolationException;
+import com.masprogtechs.park.api.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,6 +16,7 @@ import java.nio.file.AccessDeniedException;
 @Slf4j
 @RestControllerAdvice
 public class ApiExceptionHandler {
+
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorMessage> accessDeniedException(AccessDeniedException ex, HttpServletRequest request) {
@@ -51,7 +49,7 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
 
-    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
+    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class, CodeUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex,
                                                                         HttpServletRequest request){
 
