@@ -77,4 +77,33 @@ public class SlotIT {
                 .jsonPath("method").isEqualTo("POST")
                 .jsonPath("path").isEqualTo("/api/v1/slots");
     }
+
+
+    @Test
+    public void findSlot_WithCodeExisting_ReturnSlotWithStatus200(){
+        testClient
+                .get()
+                .uri("/api/v1/slots/{code}", "A-01")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("id").isEqualTo(10)
+                .jsonPath("code").isEqualTo("A-01")
+                .jsonPath("status").isEqualTo("FREE");
+    }
+
+    @Test
+    public void findSlot_WithCodeNonExisting_ReturnErrorMessageWithStatus404(){
+        testClient
+                .get()
+                .uri("/api/v1/slots/{code}", "A-10")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo(404)
+                .jsonPath("method").isEqualTo("GET")
+                .jsonPath("path").isEqualTo("/api/v1/slots/A-10");
+    }
 }
