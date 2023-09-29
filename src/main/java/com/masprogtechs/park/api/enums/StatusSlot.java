@@ -1,2 +1,6 @@
-package com.masprogtechs.park.api.enums;public enum StatusSlot {
+package com.masprogtechs.park.api.enums;
+
+public enum StatusSlot {
+
+    FREE, BUSY
 }
