@@ -31,4 +31,50 @@ public class SlotIT {
                 .expectHeader().exists(HttpHeaders.LOCATION);
 
     }
+
+    @Test
+    public void createSlot_WithCodeExisting_ReturnErrorMessageWithStatus409(){
+        testClient
+                .post()
+                .uri("/api/v1/slots")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .bodyValue(new SlotCreateDto("A-01", "FREE"))
+                .exchange()
+                .expectStatus().isEqualTo(409)
+                .expectBody()
+                .jsonPath("status").isEqualTo(409)
+                .jsonPath("method").isEqualTo("POST")
+                .jsonPath("path").isEqualTo("/api/v1/slots");
+
+    }
+
+    @Test
+    public void createSlot_WithDataInvalid_ReturnErrorMessageWithStatus422(){
+        testClient
+                .post()
+                .uri("/api/v1/slots")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .bodyValue(new SlotCreateDto("", ""))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody()
+                .jsonPath("status").isEqualTo(422)
+                .jsonPath("method").isEqualTo("POST")
+                .jsonPath("path").isEqualTo("/api/v1/slots");
+
+        testClient
+                .post()
+                .uri("/api/v1/slots")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .bodyValue(new SlotCreateDto("A-501", "BUSY"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody()
+                .jsonPath("status").isEqualTo(422)
+                .jsonPath("method").isEqualTo("POST")
+                .jsonPath("path").isEqualTo("/api/v1/slots");
+    }
 }
