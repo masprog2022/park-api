@@ -52,7 +52,7 @@ public class CustomerSlot implements Serializable {
     @Column(name = "value", columnDefinition = "decimal(7,2)")
     private BigDecimal value; // valor
 
-    @Column(name = "value", columnDefinition = "decimal(7,2)")
+    @Column(name = "discount", columnDefinition = "decimal(7,2)")
     private BigDecimal discount; // desconto
 
     @ManyToOne
