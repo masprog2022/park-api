@@ -14,7 +14,7 @@ public class CustomerSlotMapper {
        return new ModelMapper().map(dto, CustomerSlot.class);
     }
 
-    public ParkResponseDto toDto(CustomerSlot customerSlot){
+    public static ParkResponseDto toDto(CustomerSlot customerSlot){
         return new ModelMapper().map(customerSlot, ParkResponseDto.class);
     }
 }
