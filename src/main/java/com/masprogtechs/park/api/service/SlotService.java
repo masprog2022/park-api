@@ -8,12 +8,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.masprogtechs.park.api.enums.StatusSlot.FREE;
+
 
 @RequiredArgsConstructor
 @Service
 public class SlotService {
 
     private final SlotRepository slotRepository;
+
 
     @Transactional
     public Slot save(Slot slot){
@@ -31,4 +34,11 @@ public class SlotService {
                 () -> new EntityRuntimeException(String.format("Vaga com o code %s não foi encontrado.", code))
         );
     }
+
+    @Transactional(readOnly = true)
+    public  Slot findBySlotFree() {
+        return slotRepository.findFirstByStatus(FREE).orElseThrow(
+                () -> new EntityRuntimeException("Nenhuma vaga livre foi encontrada"));
+    }
+
 }
