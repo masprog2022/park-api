@@ -25,4 +25,9 @@ public class CustomerSlotService {
                 ))
         );
     }
+
+    @Transactional(readOnly = true)
+    public long getTotalOfTimesParkCompleted(String cpf) {
+        return repository.countByCustomerCpfAndOutputDataIsNotNull(cpf);
+    }
 }
