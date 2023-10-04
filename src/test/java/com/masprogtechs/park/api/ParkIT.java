@@ -85,4 +85,49 @@ public class ParkIT {
 
     }
 
+    @Test
+    public void createCheckIn_WithCpfNonExistent_ReturnErrorMessage404(){ // Cpf Não existente no banco de dados
+        ParkCreateDto createDto = ParkCreateDto.builder()
+                .plate("NER-1111").make("FIAT").model("PALIO 1.0")
+                .color("AZUL").customerCpf("16508329073")
+                .build();
+
+        testClient.post().uri("/api/v1/parks/check-in")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .bodyValue(createDto)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo("404")
+                .jsonPath("path").isEqualTo("/api/v1/parks/check-in")
+                .jsonPath("method").isEqualTo("POST");
+        //.jsonPath("slotCode").exists()
+
+    }
+
+    @Sql(scripts = "/sql/parks/park-insert-slot-busy.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/sql/parks/park-delete-slot-busy.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Test
+    public void createCheckIn_WithSlotBusy_ReturnErrorMessageStatus404(){ // Cpf Não existente no banco de dados
+        ParkCreateDto createDto = ParkCreateDto.builder()
+                .plate("NER-1111").make("FIAT").model("PALIO 1.0")
+                .color("AZUL").customerCpf("63609496010")
+                .build();
+
+        testClient.post().uri("/api/v1/parks/check-in")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .bodyValue(createDto)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo("404")
+                .jsonPath("path").isEqualTo("/api/v1/parks/check-in")
+                .jsonPath("method").isEqualTo("POST");
+        //.jsonPath("slotCode").exists()
+
+    }
+
+
 }
