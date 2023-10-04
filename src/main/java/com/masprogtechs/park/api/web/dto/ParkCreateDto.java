@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.br.CPF;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ParkCreateDto {
 
     @NotBlank

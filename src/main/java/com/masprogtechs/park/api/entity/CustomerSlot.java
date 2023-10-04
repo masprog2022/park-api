@@ -49,8 +49,8 @@ public class CustomerSlot implements Serializable {
     @Column(name = "output_data")
     private LocalDateTime outputData; // data de entrada
 
-    @Column(name = "value", columnDefinition = "decimal(7,2)")
-    private BigDecimal value; // valor
+    @Column(name = "charge", columnDefinition = "decimal(7,2)")
+    private BigDecimal charge; // valor
 
     @Column(name = "discount", columnDefinition = "decimal(7,2)")
     private BigDecimal discount; // desconto
