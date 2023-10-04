@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface CustomerSlotRepository extends JpaRepository<CustomerSlot, Long> {
     Optional<CustomerSlot> findByReceiptAndOutputDataIsNull(String receipt);
+
+    long countByCustomerCpfAndOutputDataIsNotNull(String cpf);
 }
