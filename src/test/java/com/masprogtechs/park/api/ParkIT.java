@@ -129,5 +129,59 @@ public class ParkIT {
 
     }
 
+    @Test
+    public void findCheckIn_WithRoleAdmin_ReturnDataStatus200(){ // Cpf Não existente no banco de dados
+
+        testClient.get()
+                .uri("/api/v1/parks/check-in/{receipt}", "20230313-101300")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("plate").isEqualTo("FIT-1020")
+                .jsonPath("make").isEqualTo("FIAT")
+                .jsonPath("model").isEqualTo("PALIO")
+                .jsonPath("color").isEqualTo("VERDE")
+                .jsonPath("customerCpf").isEqualTo("52186821010")
+                .jsonPath("receipt").isEqualTo("20230313-101300")
+                .jsonPath("inputData").isEqualTo("2023-03-13 10:15:00")
+                .jsonPath("slotCode").isEqualTo("A-01");
+    }
+
+    @Test
+    public void findCheckIn_WithRoleCustomer_ReturnDataStatus200(){ // Cpf Não existente no banco de dados
+
+        testClient.get()
+                .uri("/api/v1/parks/check-in/{receipt}", "20230313-101300")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("plate").isEqualTo("FIT-1020")
+                .jsonPath("make").isEqualTo("FIAT")
+                .jsonPath("model").isEqualTo("PALIO")
+                .jsonPath("color").isEqualTo("VERDE")
+                .jsonPath("customerCpf").isEqualTo("52186821010")
+                .jsonPath("receipt").isEqualTo("20230313-101300")
+                .jsonPath("inputData").isEqualTo("2023-03-13 10:15:00")
+                .jsonPath("slotCode").isEqualTo("A-01");
+
+    }
+
+    @Test
+    public void findCheckIn_WithReceiptNonExistent_ReturnErrorStatus404(){ // Cpf Não existente no banco de dados
+
+        testClient.get()
+                .uri("/api/v1/parks/check-in/{receipt}", "20230313-999999")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo("404")
+                .jsonPath("path").isEqualTo("/api/v1/parks/check-in/20230313-999999")
+                .jsonPath("method").isEqualTo("GET");
+
+    }
+
 
 }
