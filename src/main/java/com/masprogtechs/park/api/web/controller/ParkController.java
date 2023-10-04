@@ -1,12 +1,14 @@
 package com.masprogtechs.park.api.web.controller;
 
 import com.masprogtechs.park.api.entity.CustomerSlot;
+import com.masprogtechs.park.api.service.CustomerSlotService;
 import com.masprogtechs.park.api.service.ParkService;
 import com.masprogtechs.park.api.web.dto.ParkCreateDto;
 import com.masprogtechs.park.api.web.dto.ParkResponseDto;
 import com.masprogtechs.park.api.web.dto.mapper.CustomerSlotMapper;
 import com.masprogtechs.park.api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,13 +20,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
 
 @Tag(name = "Estacionamentos", description = "Operações de registro de entrada e saída de um veículo do estacionamento.")
 @RequiredArgsConstructor
@@ -33,6 +34,7 @@ import java.net.URI;
 public class ParkController {
 
     private final ParkService parkService;
+    private final CustomerSlotService customerSlotService;
 
     @Operation(summary = "Operação de check-in", description = "Recurso para dar entrada de um veículo no estacionamento. " +
             "Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN'",
@@ -66,6 +68,28 @@ public class ParkController {
                 .toUri();
 
         return ResponseEntity.created(location).body(responseDto);
+    }
+
+    @Operation(summary = "Localizar um veículo estacionado", description = "Recurso para retornar um veículo estacionado " +
+            "pelo nº do recibo. Requisição exige uso de um bearer token.",
+            security = @SecurityRequirement(name = "security"),
+            parameters = {
+                    @Parameter(in = PATH, name = "recibo", description = "Número do rebibo gerado pelo check-in")
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ParkResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Número do recibo não encontrado.",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
+    @GetMapping("/check-in/{receipt}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CUSTOMER')")
+    public ResponseEntity<ParkResponseDto> getByReceipt(@PathVariable String receipt){
+      CustomerSlot customerSlot = customerSlotService.findByReceipt(receipt);
+      ParkResponseDto dto = CustomerSlotMapper.toDto(customerSlot);
+      return ResponseEntity.ok(dto);
     }
 
 }
