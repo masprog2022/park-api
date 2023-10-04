@@ -39,8 +39,50 @@ public class ParkIT {
                 .jsonPath("customerCpf").isEqualTo("63609496010")
                 .jsonPath("receipt").exists()
                 .jsonPath("inputData").exists();
-                //.jsonPath("slotCode").exists();
-
+                //.jsonPath("slotCode").exists()
 
     }
+
+    @Test
+    public void createCheckIn_WithRoleCustomer_ReturnErrorMessageStatus403(){
+        ParkCreateDto createDto = ParkCreateDto.builder()
+                .plate("NER-1111").make("FIAT").model("PALIO 1.0")
+                .color("AZUL").customerCpf("63609496010")
+                .build();
+
+        testClient.post().uri("/api/v1/parks/check-in")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@gmail.com", "123456"))
+                .bodyValue(createDto)
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("status").isEqualTo("403")
+                .jsonPath("path").isEqualTo("api/v1/parks/check-in")
+                .jsonPath("method").isEqualTo("POST");
+        //.jsonPath("slotCode").exists()
+
+    }
+
+    @Test
+    public void createCheckIn_WithDataInvalid_ReturnErrorMessage422(){ // validar mais coisas ... por exemplo CPF
+        ParkCreateDto createDto = ParkCreateDto.builder()
+                .plate("").make("").model("")
+                .color("").customerCpf("")
+                .build();
+
+        testClient.post().uri("/api/v1/parks/check-in")
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@gmail.com", "123456"))
+                .bodyValue(createDto)
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody()
+                .jsonPath("status").isEqualTo("422")
+                .jsonPath("path").isEqualTo("/api/v1/parks/check-in")
+                .jsonPath("method").isEqualTo("POST");
+        //.jsonPath("slotCode").exists()
+
+    }
+
 }
