@@ -40,4 +40,8 @@ public class CustomerSlotService {
         return repository.findAllByCustomerCpf(cpf, pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Page<CustomerSlotProjection> findAllByUserId(Long id, Pageable pageable) {
+        return repository.findAllByCustomerUserId(id, pageable);
+    }
 }
