@@ -20,7 +20,7 @@ public class SpringDocOpenApiConfig {
                 .info(new Info()
                         .title("REST API - Parking Lot")
                         .version("v1")
-                        .description("Api para gestão de gerenciamento de veículos")
+                        .description("Api para gestão de gerenciamento de veículos num parque de estacionamento")
                         .termsOfService("https://about-mauro.netlify.app/")
                         .license(
                                 new License()
