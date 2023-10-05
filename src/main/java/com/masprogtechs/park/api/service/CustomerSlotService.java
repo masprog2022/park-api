@@ -3,7 +3,10 @@ package com.masprogtechs.park.api.service;
 import com.masprogtechs.park.api.entity.CustomerSlot;
 import com.masprogtechs.park.api.exception.EntityRuntimeException;
 import com.masprogtechs.park.api.repository.CustomerSlotRepository;
+import com.masprogtechs.park.api.repository.projection.CustomerSlotProjection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CustomerSlotService {
     private final CustomerSlotRepository repository;
+
 
     @Transactional
     public CustomerSlot save(CustomerSlot customerSlot){
@@ -30,4 +34,10 @@ public class CustomerSlotService {
     public long getTotalOfTimesParkCompleted(String cpf) {
         return repository.countByCustomerCpfAndOutputDataIsNotNull(cpf);
     }
+
+     @Transactional(readOnly = true)
+     public Page<CustomerSlotProjection> findAllByCustomerCpf(String cpf, Pageable pageable) {
+        return repository.findAllByCustomerCpf(cpf, pageable);
+    }
+
 }
