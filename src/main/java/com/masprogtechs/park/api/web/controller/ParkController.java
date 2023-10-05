@@ -1,6 +1,7 @@
 package com.masprogtechs.park.api.web.controller;
 
 import com.masprogtechs.park.api.entity.CustomerSlot;
+import com.masprogtechs.park.api.jwt.JwtUserDetails;
 import com.masprogtechs.park.api.repository.projection.CustomerSlotProjection;
 import com.masprogtechs.park.api.service.CustomerSlotService;
 import com.masprogtechs.park.api.service.ParkService;
@@ -28,6 +29,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -161,6 +163,44 @@ public class ParkController {
                                                        direction = Sort.Direction.ASC) Pageable pageable ){
 
         Page<CustomerSlotProjection> projection = customerSlotService.findAllByCustomerCpf(cpf, pageable);
+        PageableDto dto = PageableMapper.toDto(projection);
+        return ResponseEntity.ok(dto);
+
+    }
+
+
+    @Operation(summary = "Localizar os registros de estacionamentos do cliente logado",
+            description = "Localizar os registros de estacionamentos do cliente logado. " +
+                    "Requisição exige uso de um bearer token.",
+            security = @SecurityRequirement(name = "security"),
+            parameters = {
+                    @Parameter(in = QUERY, name = "page",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "0")),
+                            description = "Representa a página retornada"
+                    ),
+                    @Parameter(in = QUERY, name = "size",
+                            content = @Content(schema = @Schema(type = "integer", defaultValue = "5")),
+                            description = "Representa o total de elementos por página"
+                    ),
+                    @Parameter(in = QUERY, name = "sort", hidden = true,
+                            array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "dataEntrada,asc")),
+                            description = "Campo padrão de ordenação 'dataEntrada,asc'. ")
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ParkResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
+    @GetMapping
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<PageableDto> getAllParkOfCustomer(@AuthenticationPrincipal JwtUserDetails user,
+                                                       @PageableDefault(size = 5, sort = "inputData",
+                                                               direction = Sort.Direction.ASC) Pageable pageable ){
+
+        Page<CustomerSlotProjection> projection = customerSlotService.findAllByUserId(user.getId(), pageable);
         PageableDto dto = PageableMapper.toDto(projection);
         return ResponseEntity.ok(dto);
 
