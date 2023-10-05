@@ -14,4 +14,6 @@ public interface CustomerSlotRepository extends JpaRepository<CustomerSlot, Long
     long countByCustomerCpfAndOutputDataIsNotNull(String cpf);
 
     Page<CustomerSlotProjection> findAllByCustomerCpf(String cpf, Pageable pageable);
+
+    Page<CustomerSlotProjection> findAllByCustomerUserId(Long id, Pageable pageable);
 }
