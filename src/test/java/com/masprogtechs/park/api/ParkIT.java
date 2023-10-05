@@ -269,5 +269,18 @@ public class ParkIT {
 
     }
 
+    @Test
+    public void findPark_OfCustomerLoginRoleAdmin_ReturnErrorStatus403(){
+        testClient.put()
+                .uri("/api/v1/parks")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("status").isEqualTo("403")
+                .jsonPath("path").isEqualTo("/api/v1/parks")
+                .jsonPath("method").isEqualTo("PUT");
+    }
+
 
 }
