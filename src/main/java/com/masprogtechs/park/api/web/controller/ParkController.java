@@ -3,7 +3,9 @@ package com.masprogtechs.park.api.web.controller;
 import com.masprogtechs.park.api.entity.CustomerSlot;
 import com.masprogtechs.park.api.jwt.JwtUserDetails;
 import com.masprogtechs.park.api.repository.projection.CustomerSlotProjection;
+import com.masprogtechs.park.api.service.CustomerService;
 import com.masprogtechs.park.api.service.CustomerSlotService;
+import com.masprogtechs.park.api.service.JasperService;
 import com.masprogtechs.park.api.service.ParkService;
 import com.masprogtechs.park.api.web.dto.PageableDto;
 import com.masprogtechs.park.api.web.dto.ParkCreateDto;
@@ -20,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,12 +30,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.net.URI;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
@@ -46,6 +51,10 @@ public class ParkController {
 
     private final ParkService parkService;
     private final CustomerSlotService customerSlotService;
+
+    private final CustomerService customerService;
+
+    private final JasperService jasperService;
 
     @Operation(summary = "Operação de check-in", description = "Recurso para dar entrada de um veículo no estacionamento. " +
             "Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN'",
@@ -203,6 +212,22 @@ public class ParkController {
         Page<CustomerSlotProjection> projection = customerSlotService.findAllByUserId(user.getId(), pageable);
         PageableDto dto = PageableMapper.toDto(projection);
         return ResponseEntity.ok(dto);
+
+    }
+
+    @GetMapping("/reports")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<Void> getReport(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user) throws IOException {
+       String cpf = customerService.findByUserId(user.getId()).getCpf();
+       jasperService.addParams("CPF", cpf);
+
+        byte[] bytes = jasperService.generatePdf();
+
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        response.setHeader("Content-disposition", "inline; filename=" + System.currentTimeMillis() + ".pdf");
+        response.getOutputStream().write(bytes);
+
+        return ResponseEntity.ok().build();
 
     }
 
