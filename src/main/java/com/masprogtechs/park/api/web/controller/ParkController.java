@@ -5,7 +5,6 @@ import com.masprogtechs.park.api.jwt.JwtUserDetails;
 import com.masprogtechs.park.api.repository.projection.CustomerSlotProjection;
 import com.masprogtechs.park.api.service.CustomerService;
 import com.masprogtechs.park.api.service.CustomerSlotService;
-import com.masprogtechs.park.api.service.JasperService;
 import com.masprogtechs.park.api.service.ParkService;
 import com.masprogtechs.park.api.web.dto.PageableDto;
 import com.masprogtechs.park.api.web.dto.ParkCreateDto;
@@ -54,7 +53,7 @@ public class ParkController {
 
     private final CustomerService customerService;
 
-    private final JasperService jasperService;
+
 
     @Operation(summary = "Operação de check-in", description = "Recurso para dar entrada de um veículo no estacionamento. " +
             "Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN'",
@@ -197,7 +196,7 @@ public class ParkController {
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
-                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                            content = @Content(mediaType = "application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ParkResponseDto.class))),
                     @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
                             content = @Content(mediaType = " application/json;charset=UTF-8",
@@ -212,22 +211,6 @@ public class ParkController {
         Page<CustomerSlotProjection> projection = customerSlotService.findAllByUserId(user.getId(), pageable);
         PageableDto dto = PageableMapper.toDto(projection);
         return ResponseEntity.ok(dto);
-
-    }
-
-    @GetMapping("/reports")
-    @PreAuthorize("hasRole('CUSTOMER')")
-    public ResponseEntity<Void> getReport(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user) throws IOException {
-       String cpf = customerService.findByUserId(user.getId()).getCpf();
-       jasperService.addParams("CPF", cpf);
-
-        byte[] bytes = jasperService.generatePdf();
-
-        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
-        response.setHeader("Content-disposition", "inline; filename=" + System.currentTimeMillis() + ".pdf");
-        response.getOutputStream().write(bytes);
-
-        return ResponseEntity.ok().build();
 
     }
 
