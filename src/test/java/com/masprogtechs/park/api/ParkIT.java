@@ -1,5 +1,6 @@
 package com.masprogtechs.park.api;
 
+import com.masprogtechs.park.api.web.dto.PageableDto;
 import com.masprogtechs.park.api.web.dto.ParkCreateDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -127,6 +128,158 @@ public class ParkIT {
                 .jsonPath("method").isEqualTo("POST");
         //.jsonPath("slotCode").exists()
 
+    }
+
+    @Test
+    public void findCheckIn_WithRoleAdmin_ReturnDataStatus200(){ // Cpf Não existente no banco de dados
+
+        testClient.get()
+                .uri("/api/v1/parks/check-in/{receipt}", "20230313-101300")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("plate").isEqualTo("FIT-1020")
+                .jsonPath("make").isEqualTo("FIAT")
+                .jsonPath("model").isEqualTo("PALIO")
+                .jsonPath("color").isEqualTo("VERDE")
+                .jsonPath("customerCpf").isEqualTo("52186821010")
+                .jsonPath("receipt").isEqualTo("20230313-101300")
+                .jsonPath("inputData").isEqualTo("2023-03-13 10:15:00")
+                .jsonPath("slotCode").isEqualTo("A-01");
+    }
+
+    @Test
+    public void findCheckIn_WithRoleCustomer_ReturnDataStatus200(){ // Cpf Não existente no banco de dados
+
+        testClient.get()
+                .uri("/api/v1/parks/check-in/{receipt}", "20230313-101300")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("plate").isEqualTo("FIT-1020")
+                .jsonPath("make").isEqualTo("FIAT")
+                .jsonPath("model").isEqualTo("PALIO")
+                .jsonPath("color").isEqualTo("VERDE")
+                .jsonPath("customerCpf").isEqualTo("52186821010")
+                .jsonPath("receipt").isEqualTo("20230313-101300")
+                .jsonPath("inputData").isEqualTo("2023-03-13 10:15:00")
+                .jsonPath("slotCode").isEqualTo("A-01");
+
+    }
+
+    @Test
+    public void findCheckIn_WithReceiptNonExistent_ReturnErrorStatus404(){ // Cpf Não existente no banco de dados
+
+        testClient.get()
+                .uri("/api/v1/parks/check-in/{receipt}", "20230313-999999")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo("404")
+                .jsonPath("path").isEqualTo("/api/v1/parks/check-in/20230313-999999")
+                .jsonPath("method").isEqualTo("GET");
+    }
+
+
+    @Test
+    public void createCheckout_WithReceiptExistent_ReturnSuccess(){
+        testClient.put()
+                .uri("/api/v1/parks/check-out/{receipt}", "20230313-101300")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath("plate").isEqualTo("FIT-1020")
+                .jsonPath("make").isEqualTo("FIAT")
+                .jsonPath("model").isEqualTo("PALIO")
+                .jsonPath("color").isEqualTo("VERDE")
+                .jsonPath("inputData").isEqualTo("2023-03-13 10:15:00")
+                .jsonPath("customerCpf").isEqualTo("52186821010")
+                .jsonPath("slotCode").isEqualTo("A-01")
+                .jsonPath("receipt").isEqualTo("20230313-101300")
+                .jsonPath("outputData").exists()
+                .jsonPath("charge").exists()
+                .jsonPath("discount").exists();
+    }
+
+
+    @Test
+    public void createCheckout_WithReceiptNonExistent_ReturnErrorStatus404(){
+        testClient.put()
+                .uri("/api/v1/parks/check-out/{receipt}", "20230313-101377")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo("404")
+                .jsonPath("path").isEqualTo("/api/v1/parks/check-out/20230313-101377")
+                .jsonPath("method").isEqualTo("PUT");
+    }
+
+    @Test
+    public void createCheckout_WithRoleCustomer_ReturnErrorStatus403(){
+        testClient.put()
+                .uri("/api/v1/parks/check-out/{receipt}", "20230313-101300")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("status").isEqualTo("403")
+                .jsonPath("path").isEqualTo("/api/v1/parks/check-out/20230313-101300")
+                .jsonPath("method").isEqualTo("PUT");
+    }
+
+
+    @Test
+    public void findPark_ByCustomerCpf_ReturnSuccess(){
+       PageableDto responseBody = testClient.get()
+                .uri("/api/v1/parks/cpf/{cpf}?size=1&page=0", "52186821010")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PageableDto.class)
+                .returnResult()
+                .getResponseBody();
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(0);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getSize()).isEqualTo(1);
+
+
+        /*testClient.get()
+                .uri("/api/v1/parks/cpf/{cpf}?size=1&page=1", "52186821010")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PageableDto.class)
+                .returnResult()
+                .getResponseBody();
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getSize()).isEqualTo(1);
+*/
+
+
+
+    }
+
+    @Test
+    public void findPark_OfCustomerLoginRoleAdmin_ReturnErrorStatus403(){
+        testClient.put()
+                .uri("/api/v1/parks")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@gmail.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("status").isEqualTo("403")
+                .jsonPath("path").isEqualTo("/api/v1/parks")
+                .jsonPath("method").isEqualTo("PUT");
     }
 
 

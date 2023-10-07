@@ -34,6 +34,6 @@ public class ParkResponseDto {
 
 
     private String slotCode;
-    private BigDecimal value;
+    private BigDecimal charge;
     private BigDecimal discount;
 }
