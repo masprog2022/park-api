@@ -23,7 +23,7 @@ public class ParkResponseDto {
     private String make;
     private String model;
     private String color;
-    private String customerCpf;
+    private String customerBi;
     private String receipt;
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")

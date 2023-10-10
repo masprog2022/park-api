@@ -10,5 +10,5 @@ public class CustomerResponseDto {
 
     private Long id;
     private String name;
-    private String cpf;
+    private String bi;
 }

@@ -12,8 +12,9 @@ import java.time.temporal.ChronoUnit;
 public class ParkUtils {
 
 
-    private static final double FIRST_15_MINUTES = 5.00;
-    private static final double FIRST_60_MINUTES = 9.25;
+    private static final double FIRST_15_MINUTES = 0.00;
+    private static final double FIRST_60_MINUTES = 300.00;
+
     private static final double ADDITIONAL_15_MINUTES = 1.75;
     private static final double PERCENTAGE_DISCOUNT = 0.30;
 
