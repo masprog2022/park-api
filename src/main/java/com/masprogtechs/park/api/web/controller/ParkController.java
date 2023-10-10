@@ -138,11 +138,11 @@ public class ParkController {
     }
 
 
-    @Operation(summary = "Localizar os registros de estacionamentos do cliente por CPF", description = "Localizar os " +
-            "registros de estacionamentos do cliente por CPF. Requisição exige uso de um bearer token.",
+    @Operation(summary = "Localizar os registros de estacionamentos do cliente por BI", description = "Localizar os " +
+            "registros de estacionamentos do cliente por BI. Requisição exige uso de um bearer token.",
             security = @SecurityRequirement(name = "security"),
             parameters = {
-                    @Parameter(in = PATH, name = "cpf", description = "Nº do CPF referente ao cliente a ser consultado",
+                    @Parameter(in = PATH, name = "bi", description = "Nº do CPF referente ao cliente a ser consultado",
                             required = true
                     ),
                     @Parameter(in = QUERY, name = "page", description = "Representa a página retornada",
@@ -164,13 +164,13 @@ public class ParkController {
                             content = @Content(mediaType = " application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ErrorMessage.class)))
             })
-    @GetMapping("/cpf/{cpf}")
+    @GetMapping("/bi/{bi}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageableDto> getAllParkByCpf(@PathVariable String cpf,
+    public ResponseEntity<PageableDto> getAllParkByBi(@PathVariable String bi,
                                                        @PageableDefault(size = 5, sort = "inputData",
                                                        direction = Sort.Direction.ASC) Pageable pageable ){
 
-        Page<CustomerSlotProjection> projection = customerSlotService.findAllByCustomerCpf(cpf, pageable);
+        Page<CustomerSlotProjection> projection = customerSlotService.findAllByCustomerBi(bi, pageable);
         PageableDto dto = PageableMapper.toDto(projection);
         return ResponseEntity.ok(dto);
 

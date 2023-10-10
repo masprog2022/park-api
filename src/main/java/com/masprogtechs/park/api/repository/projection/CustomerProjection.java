@@ -4,5 +4,5 @@ public interface CustomerProjection {
 
     Long getId();
     String getName();
-    String getCpf();
+    String getBi();
 }

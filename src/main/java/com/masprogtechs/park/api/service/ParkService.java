@@ -23,7 +23,7 @@ public class ParkService {
     @Transactional
     public CustomerSlot checkIn(CustomerSlot customerSlot){
 
-        Customer customer = customerService.findByCpf(customerSlot.getCustomer().getCpf());
+        Customer customer = customerService.findByBi(customerSlot.getCustomer().getBi());
         customerSlot.setCustomer(customer);
 
         Slot slot = slotService.findBySlotFree();
@@ -46,7 +46,7 @@ public class ParkService {
         BigDecimal value = ParkUtils.calculateCost(customerSlot.getInputData(), outputData);
         customerSlot.setCharge(value);
 
-        long total_of_times = customerSlotService.getTotalOfTimesParkCompleted(customerSlot.getCustomer().getCpf());
+        long total_of_times = customerSlotService.getTotalOfTimesParkCompleted(customerSlot.getCustomer().getBi());
 
         BigDecimal discount = ParkUtils.calculateDiscount(value, total_of_times);
 

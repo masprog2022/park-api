@@ -13,7 +13,7 @@ public interface CustomerSlotProjection {
      String getMake();
      String getModel();
      String getColor();
-     String getCustomerCpf();
+     String getCustomerBi();
      String getReceipt();
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")

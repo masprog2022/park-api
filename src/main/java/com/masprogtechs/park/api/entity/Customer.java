@@ -31,8 +31,8 @@ public class Customer implements Serializable {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "cpf", nullable = false, unique = true, length = 11)
-    private String cpf;
+    @Column(name = "bi", nullable = false, unique = true, length = 12)
+    private String bi;
 
     @OneToOne
     @JoinColumn(name = "id_user", nullable = false)

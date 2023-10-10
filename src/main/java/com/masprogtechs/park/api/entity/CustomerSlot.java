@@ -31,7 +31,7 @@ public class CustomerSlot implements Serializable {
    @Column(name = "number_receipt", nullable = false, unique = true, length = 15)
    private String receipt; // recibo
 
-    @Column(name = "plate", nullable = false, length = 8)
+    @Column(name = "plate", nullable = false, length = 11)
     private String plate; // placa de carro
 
     @Column(name = "make", nullable = false, length = 45)

@@ -31,13 +31,13 @@ public class CustomerSlotService {
     }
 
     @Transactional(readOnly = true)
-    public long getTotalOfTimesParkCompleted(String cpf) {
-        return repository.countByCustomerCpfAndOutputDataIsNotNull(cpf);
+    public long getTotalOfTimesParkCompleted(String bi) {
+        return repository.countByCustomerBiAndOutputDataIsNotNull(bi);
     }
 
      @Transactional(readOnly = true)
-     public Page<CustomerSlotProjection> findAllByCustomerCpf(String cpf, Pageable pageable) {
-        return repository.findAllByCustomerCpf(cpf, pageable);
+     public Page<CustomerSlotProjection> findAllByCustomerBi(String bi, Pageable pageable) {
+        return repository.findAllByCustomerBi(bi, pageable);
     }
 
     @Transactional(readOnly = true)

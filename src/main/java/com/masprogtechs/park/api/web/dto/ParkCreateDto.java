@@ -14,8 +14,8 @@ import org.hibernate.validator.constraints.br.CPF;
 public class ParkCreateDto {
 
     @NotBlank
-    @Size(min = 8, max = 8)
-    @Pattern(regexp = "[A-Z]{3}-[0-9]{4}", message = "A placa do veículo deve seguir o padrão 'XXX-000'")
+    @Size(min = 11, max = 11)
+    @Pattern(regexp = "^[A-Z]{2}-\\d{2}-\\d{2}-[A-Z]{2}$", message = "A matricula do carro deve seguir o padrão 'XX-00-00-YY'")
     private String plate;
 
     @NotBlank
@@ -28,8 +28,8 @@ public class ParkCreateDto {
     private String color;
 
     @NotBlank
-    @Size(min = 11, max = 11)
-    @CPF
-    private String customerCpf;
+    @Size(min = 12, max = 12)
+    @Pattern(regexp = "^\\d{7}[A-Z]{2}\\d{3}$", message = "Bilhete de entidade deve ter este padrão OOOOOOOXX000")
+    private String customerBi;
 
 }
