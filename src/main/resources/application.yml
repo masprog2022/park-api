@@ -1,10 +1,11 @@
 # Spring Boot configuration
 spring:
+  application:
+    name: Pamps
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/demo_park
-    username: postgres
-    password: admin
+    url: jdbc:postgresql://dpg-cko3uu61101c73dmbcjg-a.oregon-postgres.render.com:5432/render_deploy_mt77
+    password: M0o0mriFa0deGZQU6MJL0TRPsG61HxKh
+    username: render_deploy_mt77_user
   jpa:
     hibernate:
       ddl-auto: update # When you launch the application for the first time - switch "none" at "create"
