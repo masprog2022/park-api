@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class CustomerService {
@@ -50,7 +52,14 @@ public class CustomerService {
     @Transactional(readOnly = true)
     public Customer findByBi(String bi) {
         return customerRepository.findByBi(bi).orElseThrow(
-                ()-> new EntityRuntimeException(String.format("Cliente com CPF %s não encontrafo", bi))
+                ()-> new EntityRuntimeException(String.format("Cliente com BI %s não encontrado", bi))
         );
     }
+
+
+
+
+
+
+
 }

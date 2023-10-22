@@ -10,6 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class CustomerSlotService {
@@ -21,7 +24,7 @@ public class CustomerSlotService {
         return repository.save(customerSlot);
     }
 
-    @Transactional(readOnly = true)
+  @Transactional(readOnly = true)
     public CustomerSlot findByReceipt(String receipt) {
         return repository.findByReceiptAndOutputDataIsNull(receipt).orElseThrow(
                 () -> new EntityRuntimeException(String.format(
@@ -29,6 +32,7 @@ public class CustomerSlotService {
                 ))
         );
     }
+
 
     @Transactional(readOnly = true)
     public long getTotalOfTimesParkCompleted(String bi) {
