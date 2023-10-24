@@ -38,8 +38,8 @@ public class UserController {
     }*/
 
 
-    @PostMapping
-    @Operation(summary = "Criar um novo usuário", description = "Recurso para criar um novo usuário",
+    @PostMapping("/admin")
+    @Operation(summary = "Criar um novo usuário admin", description = "Recurso para criar um novo usuário sdmin",
             responses = {
                     @ApiResponse(responseCode = "201", description = "Recurso criado com sucesso",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
@@ -48,10 +48,26 @@ public class UserController {
                     @ApiResponse(responseCode = "422", description = "Recurso não processado por dados de entrada invalidos",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             })
-    public ResponseEntity<UserResponseDto> create(@Valid @RequestBody UserCreateDto createDto){
-        User user = userService.save(UserMapper.toUser(createDto));
+    public ResponseEntity<UserResponseDto> createUserAdmin(@Valid @RequestBody UserCreateDto createDto){
+        User user = userService.saveUserAdmin(UserMapper.toUser(createDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(user));
     }
+
+    @PostMapping("/customer")
+    @Operation(summary = "Criar um novo usuário customer", description = "Recurso para criar um novo usuário customer",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Recurso criado com sucesso",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
+                    @ApiResponse(responseCode = "409", description = "Usuário e-mail já cadastrado no sistema",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "422", description = "Recurso não processado por dados de entrada invalidos",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
+            })
+    public ResponseEntity<UserResponseDto> createUserCustomer(@Valid @RequestBody UserCreateDto createDto){
+        User user = userService.saveUserCustomer(UserMapper.toUser(createDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserMapper.toDto(user));
+    }
+
 
    /* @GetMapping("/{id}")
     public ResponseEntity<User> getById(@PathVariable Long id){

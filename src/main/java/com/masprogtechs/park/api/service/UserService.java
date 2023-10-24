@@ -22,15 +22,35 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    private final AdminUserService adminUserService;
+
+    private final CustomerUserService customerUserService;
+
     @Transactional
-    public User save(User user) {
+    public User saveUserCustomer(User user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return userRepository.save(user);
+            if(user.getRole() == null){
+                return customerUserService.save(user);
+            }else{
+                throw new IllegalArgumentException("Invalid role: " + user.getRole());
+            }
         } catch (DataIntegrityViolationException ex){
             throw new UsernameUniqueViolationException(String.format("Username %s já cadastrado", user.getUsername()));
         }
+    }
 
+    public User saveUserAdmin(User user) {
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            if(user.getRole() == null){
+                return adminUserService.save(user);
+            }else{
+                throw new IllegalArgumentException("Invalid role: " + user.getRole());
+            }
+        } catch (DataIntegrityViolationException ex){
+            throw new UsernameUniqueViolationException(String.format("Username %s já cadastrado", user.getUsername()));
+        }
     }
 
     @Transactional(readOnly = true)
