@@ -27,7 +27,7 @@ public class SpringDocOpenApiConfig {
                                         .name("GNU GENERAL PUBLIC LICENSE")
                                         .url("https://www.gnu.org/licenses/gpl-3.0.pt-br.html")
                         )
-                        .contact(new Contact().name("Mauro Manuel").email("masprog2022@gmail.com"))
+                        .contact(new Contact().name("Mauro Manuel").url("https://www.linkedin.com/in/mauro-manuel-522947b2/"))
                 );
     }
 
